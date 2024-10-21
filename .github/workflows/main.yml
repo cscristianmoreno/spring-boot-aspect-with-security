@@ -1,33 +1,45 @@
-name: Actions
+name: Initialized
 
 on:
-  push: 
-    branches: master
+  push:
+    branches: [master]
 
 jobs:
-  auto-commit:
+  build-app:
     runs-on: ubuntu-latest
-    permissions: 
-      contents: write
     steps:
       - name: Checking repository...
         uses: actions/checkout@v4
-      - name: Running auto commit...
-        uses: stefanzweifel/git-auto-commit-action@v5
+      - name: Setup java
+        uses: actions/setup-java@v4
         with:
-          commit_message: Up changes
-          branch: master
-          repository: .
-    
-  docker-image-build:
+            distribution: 'temurin'
+            java-version: 21
+            cache: maven
+      - name: Cleaning and installing dependencies...
+        run: mvn clean package
+
+  docker-building-and-pushing:
+    runs-on: ubuntu-latest
+    needs: [build-app]
+    steps:
+      - name: Checking repository...
+        uses: actions/checkout@v4
+      - uses: mr-smithers-excellent/docker-build-push@v6
+        name: Build & push Docker image
+        with:
+          image: cristianmorenoweb/spring-app
+          tags: latest
+          registry: docker.io
+          dockerfile: Dockerfile
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+  
+  notification-commit:
+    needs: [docker-building-and-pushing]
     runs-on: ubuntu-latest
     steps:
-        - name: Build & push Docker image
-          uses: mr-smithers-excellent/docker-build-push@v6
-          with:
-            image: cristianmorenoweb/spring-app
-            tags: latest
-            registry: docker.io
-            dockerfile: Dockerfile
-            username: ${{ secrets.DOCKER_USERNAME }}
-            password: ${{ secrets.DOCKER_PASSWORD }}
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Commit succefully"
+          branch: master
