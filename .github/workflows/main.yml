@@ -1,1 +1,33 @@
+name: Actions
 
+on:
+  push: 
+    branches: master
+
+jobs:
+  auto-commit:
+    runs-on: ubuntu-latest
+    permissions: 
+      contents: write
+    steps:
+      - name: Checking repository...
+        uses: actions/checkout@v4
+      - name: Running auto commit...
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: Up changes
+          branch: master
+          repository: .
+    
+  docker-image-build:
+    runs-on: ubuntu-latest
+    steps:
+        - name: Build & push Docker image
+          uses: mr-smithers-excellent/docker-build-push@v6
+          with:
+            image: repo/image
+            tags: v1, latest
+            registry: registry-url.io
+            dockerfile: Dockerfile.ci
+            username: ${{ secrets.DOCKER_USERNAME }}
+            password: ${{ secrets.DOCKER_PASSWORD }}
