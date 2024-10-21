@@ -28,5 +28,6 @@ jobs:
             image: https://hub.docker.com/repository/docker/cristianmorenoweb/spring-app/general
             tags: latest
             registry: docker.io
+            dockerfile: Dockerfile
             username: ${{ secrets.DOCKER_USERNAME }}
             password: ${{ secrets.DOCKER_PASSWORD }}
