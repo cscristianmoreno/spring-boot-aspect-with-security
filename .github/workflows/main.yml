@@ -43,7 +43,7 @@ jobs:
         with:
           image: cristianmorenoweb/spring-app
           tags: latest
-          registry: docker.io
+          registry: hub.docker.com
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
   
