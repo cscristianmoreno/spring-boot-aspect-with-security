@@ -1,0 +1,42 @@
+version: "2"
+
+services:
+  service-database:
+    image: postgres:latest
+    container_name: sv_database
+    ports:
+      - 5432:5432
+    volumes:
+      - db_volume:/var/lib/postgres/data/
+    env_file:
+      - ./.env
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "sh -c 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}'"]
+      interval: 30s
+      timeout: 30s
+      retries: 5
+
+  service-backend:
+    container_name: sv_backend
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+    depends_on: 
+      service-database:
+        condition: service_healthy
+    healthcheck:
+      test: "curl --fail --silent localhost:8080/actuator/health/readiness | grep UP || exit 1"
+      interval: 1s
+      timeout: 30s
+      retries: 30s
+      start_period: 30s
+    expose:
+      - 8080:8080
+    env_file:
+      - ./.env
+
+volumes:
+  db_volume:

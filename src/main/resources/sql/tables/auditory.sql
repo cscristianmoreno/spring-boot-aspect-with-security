@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS auditory (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(32) NOT NULL,
+    type VARCHAR(32) NOT NULL,
+    description TEXT,
+    date TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW()
+)

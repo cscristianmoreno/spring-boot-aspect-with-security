@@ -1,0 +1,44 @@
+spring:
+  application:
+    name: spring-app
+  datasource:
+    url: jdbc:postgresql://${POSTGRES_URL}/${POSTGRES_DB}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: none
+    database: postgresql
+    
+  sql:
+    init:
+      schema-locations:
+         - classpath:sql/initialization.sql 
+         - classpath:sql/tables/roles.sql 
+         - classpath:sql/tables/persons.sql 
+         - classpath:sql/tables/users.sql 
+         - classpath:sql/tables/auditory.sql 
+      separator: ^^^ END OF SCRIPT ^^^
+      mode: always
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+springdoc:
+  api-docs:
+    path: /v1/api
+
+jwk:
+  private:
+    key: classpath:/keys/private.pem
+  public:
+    key: classpath:/keys/public.pem
+  issuer: HZD1clXlGcUfJMQQ5elXUkbXTdL2HL0qs2TvjnkSPbA=
+  duration: 3600
+  
