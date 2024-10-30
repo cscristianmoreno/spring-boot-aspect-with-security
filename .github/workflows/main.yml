@@ -7,6 +7,7 @@ on:
 jobs:
   build-and-upload:
     runs-on: ubuntu-latest
+    name: spring-app
     steps:
       - name: Checking repository...
         uses: actions/checkout@v4
@@ -21,8 +22,14 @@ jobs:
         with:
           name: app
           path: target/app.jar
-      
 
+  download-and-build:
+    needs: [build-and-upload]
+    uses: ./.github/workflows/build-app.yml
+       
+  
+  
+  
     
 
 

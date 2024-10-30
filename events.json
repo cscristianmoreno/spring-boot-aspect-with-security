@@ -1,5 +1,6 @@
 {
     "workflow_run": {
+        "name": "spring-app",
         "conclusion": "success"
     }
 }
